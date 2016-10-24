@@ -6,10 +6,11 @@ require 'range_ppoi_string/version'
 Gem::Specification.new do |spec|
   spec.name          = "range_ppoi_string"
   spec.version       = RangePpoiString::VERSION
+  spec.licenses      = ["MIT"]
   spec.authors       = ["yancya"]
   spec.email         = ["yancya@upec.jp"]
 
-  spec.summary       = %q{Convert Array to range ppoi string, and reverse}
+  spec.summary       = %q{Handling range ppoi string}
   spec.description   = %q{Convert Array to range ppoi string, and reverse}
   spec.homepage      = %q{https://github.com/yancya/range_ppoi_string}
 
@@ -22,5 +23,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "test-unit"
+  spec.add_development_dependency "test-unit", '~> 0'
 end
