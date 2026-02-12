@@ -1,5 +1,4 @@
 require "range_ppoi_string/version"
-require "set"
 
 module RangePpoiString
   class NoNextError < StandardError; end
@@ -12,7 +11,7 @@ module RangePpoiString
         raise NoNextError.new("No next method: #{self.reject(&HAVE_NEXT)}")
       end
 
-      SortedSet[*self].each_with_object([[]]) { |o, res|
+      self.uniq.sort.each_with_object([[]]) { |o, res|
         res.push([]) if res.empty?
 
         if res.last.empty? || res.last.last.next == o

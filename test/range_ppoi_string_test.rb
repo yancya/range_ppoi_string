@@ -7,7 +7,10 @@ class RangePpoiStringTest < Test::Unit::TestCase
   data(
     1 => [[*1..3, 5, 7], "1-3,5,7"],
     2 => [[], ""],
-    3 => [[*?a..?c, ?z], "a-c,z"]
+    3 => [[*?a..?c, ?z], "a-c,z"],
+    "unsorted input" => [[3, 1, 2, 5, 7], "1-3,5,7"],
+    "duplicated input" => [[1, 1, 2, 3, 3, 5, 7], "1-3,5,7"],
+    "unsorted and duplicated input" => [[7, 3, 1, 5, 2, 1, 3], "1-3,5,7"],
   )
   test "to_s" do |(actual, expected)|
     assert { actual.to_s == expected }
