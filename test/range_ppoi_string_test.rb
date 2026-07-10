@@ -54,3 +54,30 @@ class RangePpoiStringTest < Test::Unit::TestCase
     assert { array.to_s.to_a == array.map(&:to_s) }
   end
 end
+
+class RangePpoiStringModuleApiTest < Test::Unit::TestCase
+  # Deliberately no `using RangePpoiString` here: this class proves the
+  # module functions work without the refinements active.
+
+  test "dump converts an array to a range ppoi string" do
+    assert { RangePpoiString.dump([*1..3, 5, 7]) == "1-3,5,7" }
+  end
+
+  test "parse converts a range ppoi string to an array" do
+    assert { RangePpoiString.parse("1-3,5,7") == %w{1 2 3 5 7} }
+  end
+
+  test "dump raises NoNextError for elements without next" do
+    assert_raise(RangePpoiString::NoNextError) { RangePpoiString.dump([1.5, 2.5]) }
+  end
+
+  test "parse raises ParseError for malformed input" do
+    assert_raise(RangePpoiString::ParseError) { RangePpoiString.parse("3-1") }
+  end
+
+  test "dump and parse round-trip negative integers identically to the refinements" do
+    array = [-3, -2, -1, 5]
+    assert { RangePpoiString.dump(array) == "-3--1,5" }
+    assert { RangePpoiString.parse(RangePpoiString.dump(array)) == array.map(&:to_s) }
+  end
+end
