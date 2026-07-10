@@ -24,4 +24,8 @@ class RangePpoiStringTest < Test::Unit::TestCase
   test "to_a" do |(actual, expected)|
     assert { actual.to_a == expected }
   end
+
+  test "to_s raises NoNextError instead of recursing when elements don't respond to next" do
+    assert_raise(RangePpoiString::NoNextError) { [1.5, 2.5].to_s }
+  end
 end

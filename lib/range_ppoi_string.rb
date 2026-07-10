@@ -8,7 +8,7 @@ module RangePpoiString
   refine Array do
     def to_s
       unless self.all?(&HAVE_NEXT)
-        raise NoNextError.new("No next method: #{self.reject(&HAVE_NEXT)}")
+        raise NoNextError.new("No next method: #{self.reject(&HAVE_NEXT).inspect}")
       end
 
       self.uniq.sort.each_with_object([[]]) { |o, res|
