@@ -38,4 +38,19 @@ class RangePpoiStringTest < Test::Unit::TestCase
   test "to_a raises ParseError on malformed input" do |input|
     assert_raise(RangePpoiString::ParseError) { input.to_a }
   end
+
+  data(
+    "negative single value" => ["-3", ["-3"]],
+    "negative to negative range" => ["-3--1", %w{-3 -2 -1}],
+    "negative to positive range" => ["-2-1", %w{-2 -1 0 1}],
+  )
+  test "to_a round-trips negative integers" do |(input, expected)|
+    assert { input.to_a == expected }
+  end
+
+  test "negative integer array round-trips through to_s and to_a" do
+    array = [-3, -2, -1, 5]
+    assert { array.to_s == "-3--1,5" }
+    assert { array.to_s.to_a == array.map(&:to_s) }
+  end
 end

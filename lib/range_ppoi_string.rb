@@ -31,6 +31,11 @@ module RangePpoiString
     end
   end
 
+  INTEGER = /\A-?\d+\z/
+  ENDPOINT = /(?:-?\d+|[^-]+)/
+  SINGLE_VALUE = /\A#{ENDPOINT}\z/
+  RANGE_SEGMENT = /\A(#{ENDPOINT})-(#{ENDPOINT})\z/
+
   refine String do
     def to_a
       return [] if self.empty?
@@ -38,16 +43,16 @@ module RangePpoiString
       self.split(",", -1).flat_map { |s|
         raise ParseError.new("Empty segment in: #{self.inspect}") if s.empty?
 
-        a, b = s.split("-", -1)
-        next a if b.nil?
-
-        if a.empty? || b.empty?
+        if s =~ RANGE_SEGMENT
+          a, b = $1, $2
+          range = a =~ INTEGER && b =~ INTEGER ? (a.to_i..b.to_i).map(&:to_s) : [*a..b]
+          raise ParseError.new("Reversed range in segment: #{s.inspect}") if range.empty? && a != b
+          range
+        elsif s =~ SINGLE_VALUE
+          s
+        else
           raise ParseError.new("Dangling dash in segment: #{s.inspect}")
         end
-
-        range = [*a..b]
-        raise ParseError.new("Reversed range in segment: #{s.inspect}") if range.empty? && a != b
-        range
       }
     end
   end
