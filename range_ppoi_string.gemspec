@@ -14,6 +14,12 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Convert Array to range ppoi string, and reverse}
   spec.homepage      = %q{https://github.com/yancya/range_ppoi_string}
 
+  spec.metadata = {
+    "source_code_uri"       => spec.homepage,
+    "changelog_uri"         => "#{spec.homepage}/blob/master/CHANGELOG.md",
+    "rubygems_mfa_required" => "true",
+  }
+
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
