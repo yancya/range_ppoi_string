@@ -53,6 +53,10 @@ class RangePpoiStringTest < Test::Unit::TestCase
     assert { array.to_s == "-3--1,5" }
     assert { array.to_s.to_a == array.map(&:to_s) }
   end
+
+  test "to_a accepts type: Integer" do
+    assert { "1,3-5".to_a(type: Integer) == [1, 3, 4, 5] }
+  end
 end
 
 class RangePpoiStringModuleApiTest < Test::Unit::TestCase
@@ -79,5 +83,18 @@ class RangePpoiStringModuleApiTest < Test::Unit::TestCase
     array = [-3, -2, -1, 5]
     assert { RangePpoiString.dump(array) == "-3--1,5" }
     assert { RangePpoiString.parse(RangePpoiString.dump(array)) == array.map(&:to_s) }
+  end
+
+  test "parse with type: Integer round-trips an exact integer array, including negatives" do
+    array = [-3, -2, -1, 5, 7]
+    assert { RangePpoiString.parse(RangePpoiString.dump(array), type: Integer) == array }
+  end
+
+  test "parse with type: Integer raises ParseError on non-numeric segments" do
+    assert_raise(RangePpoiString::ParseError) { RangePpoiString.parse("a-c", type: Integer) }
+  end
+
+  test "parse with an unsupported type: raises ArgumentError" do
+    assert_raise(ArgumentError) { RangePpoiString.parse("1-3", type: Float) }
   end
 end

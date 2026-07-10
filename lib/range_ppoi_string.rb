@@ -36,10 +36,13 @@ module RangePpoiString
     }.join(",")
   end
 
-  def parse(string)
+  SUPPORTED_TYPES = [nil, Integer].freeze
+
+  def parse(string, type: nil)
+    raise ArgumentError.new("Unsupported type: #{type.inspect}") unless SUPPORTED_TYPES.include?(type)
     return [] if string.empty?
 
-    string.split(",", -1).flat_map { |s|
+    array = string.split(",", -1).flat_map { |s|
       raise ParseError.new("Empty segment in: #{string.inspect}") if s.empty?
 
       if s =~ RANGE_SEGMENT
@@ -53,6 +56,16 @@ module RangePpoiString
         raise ParseError.new("Dangling dash in segment: #{s.inspect}")
       end
     }
+
+    return array if type.nil?
+
+    array.map { |el|
+      begin
+        Integer(el, 10)
+      rescue ArgumentError
+        raise ParseError.new("Not an integer: #{el.inspect}")
+      end
+    }
   end
 
   refine Array do
@@ -62,8 +75,8 @@ module RangePpoiString
   end
 
   refine String do
-    def to_a
-      RangePpoiString.parse(self)
+    def to_a(type: nil)
+      RangePpoiString.parse(self, type: type)
     end
   end
 end
