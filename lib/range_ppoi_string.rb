@@ -2,6 +2,7 @@ require "range_ppoi_string/version"
 
 module RangePpoiString
   class NoNextError < StandardError; end
+  class ParseError < StandardError; end
 
   HAVE_NEXT = -> (o) { o.respond_to?(:next) }
 
@@ -32,9 +33,21 @@ module RangePpoiString
 
   refine String do
     def to_a
-      self.split(",").flat_map { |s|
-        a, b = s.split("-")
-        b.nil? ? a : [*a..b]
+      return [] if self.empty?
+
+      self.split(",", -1).flat_map { |s|
+        raise ParseError.new("Empty segment in: #{self.inspect}") if s.empty?
+
+        a, b = s.split("-", -1)
+        next a if b.nil?
+
+        if a.empty? || b.empty?
+          raise ParseError.new("Dangling dash in segment: #{s.inspect}")
+        end
+
+        range = [*a..b]
+        raise ParseError.new("Reversed range in segment: #{s.inspect}") if range.empty? && a != b
+        range
       }
     end
   end

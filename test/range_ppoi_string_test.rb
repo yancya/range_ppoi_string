@@ -28,4 +28,14 @@ class RangePpoiStringTest < Test::Unit::TestCase
   test "to_s raises NoNextError instead of recursing when elements don't respond to next" do
     assert_raise(RangePpoiString::NoNextError) { [1.5, 2.5].to_s }
   end
+
+  data(
+    "reversed range" => "3-1",
+    "empty segment between commas" => ",,1",
+    "trailing dash" => "abc-",
+    "leading dash (non-numeric)" => "-abc",
+  )
+  test "to_a raises ParseError on malformed input" do |input|
+    assert_raise(RangePpoiString::ParseError) { input.to_a }
+  end
 end
